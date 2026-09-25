@@ -1,0 +1,146 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand*\HyPL@Entry[1]{}
+\HyPL@Entry{0<</S/D>>}
+\HyPL@Entry{1<</S/D>>}
+\@writefile{toc}{\contentsline {chapter}{\numberline {1}Problem and Design Approach}{3}{chapter.1}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\newlabel{ch:intro}{{1}{3}{Problem and Design Approach}{chapter.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {1.1}Problem statement}{3}{section.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {1.2}Six families of design challenges and their priority}{3}{section.1.2}\protected@file@percent }
+\newlabel{sec:six}{{1.2}{3}{Six families of design challenges and their priority}{section.1.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1.1}{\ignorespaces Priority of the six challenge families (H = high, M = medium, L = low)}}{4}{table.caption.2}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{tab:six}{{1.1}{4}{Priority of the six challenge families (H = high, M = medium, L = low)}{table.caption.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {1.3}Shared architecture}{4}{section.1.3}\protected@file@percent }
+\newlabel{sec:arch}{{1.3}{4}{Shared architecture}{section.1.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3.1}Four layers, hybrid processing, local gateway}{4}{subsection.1.3.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1.1}{\ignorespaces Shared four-layer architecture; A and B differ only in the communication layer}}{4}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:arch}{{1.1}{4}{Shared four-layer architecture; A and B differ only in the communication layer}{figure.caption.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3.2}Sensor placement}{5}{subsection.1.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1.2}{\ignorespaces 12 nodes on a $2\times 6$ grid, three zones Z1--Z3 of 4 nodes each, outdoor node N00 and the gateway at the door}}{5}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:layout}{{1.2}{5}{12 nodes on a $2\times 6$ grid, three zones Z1--Z3 of 4 nodes each, outdoor node N00 and the gateway at the door}{figure.caption.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3.3}Node hardware}{5}{subsection.1.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {2}Criterion 1 -- Communication Infrastructure}{6}{chapter.2}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\newlabel{ch:comm}{{2}{6}{Criterion 1 -- Communication Infrastructure}{chapter.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {2.1}What the infrastructure must provide}{6}{section.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2.2}Choosing the topology}{6}{section.2.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2.1}{\ignorespaces Candidate network topologies}}{6}{table.caption.5}\protected@file@percent }
+\newlabel{tab:topo}{{2.1}{6}{Candidate network topologies}{table.caption.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {2.3}Design A: wired RS-485 ring bus with Modbus RTU}{7}{section.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3.1}Ring bus: surviving a cable break}{7}{subsection.2.3.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2.1}{\ignorespaces Design A: RS-485 cable up one column and down the other, with both ends returning to the gateway}}{7}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:ring}{{2.1}{7}{Design A: RS-485 cable up one column and down the other, with both ends returning to the gateway}{figure.caption.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3.2}Protocol: synchronised snapshot, then polling}{7}{subsection.2.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3.3}Power and protection}{8}{subsection.2.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2.4}Design B: wireless LoRa star with TDMA}{8}{section.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4.1}Radio link budget}{8}{subsection.2.4.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2.2}{\ignorespaces Link budget to the farthest node (Design B)}}{8}{table.caption.7}\protected@file@percent }
+\newlabel{tab:link}{{2.2}{8}{Link budget to the farthest node (Design B)}{table.caption.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4.2}Channel access: TDMA instead of random access}{9}{subsection.2.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2.2}{\ignorespaces TDMA frame of Design B}}{9}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:tdma}{{2.2}{9}{TDMA frame of Design B}{figure.caption.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4.3}Reliable delivery}{9}{subsection.2.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4.4}Adaptive reporting: saving energy without delaying alerts}{9}{subsection.2.4.4}\protected@file@percent }
+\newlabel{sec:adaptive}{{2.4.4}{9}{Adaptive reporting: saving energy without delaying alerts}{subsection.2.4.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4.5}Energy}{10}{subsection.2.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4.6}Security}{10}{subsection.2.4.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2.5}Summary of the two infrastructures}{10}{section.2.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2.3}{\ignorespaces How each design meets the infrastructure requirements}}{10}{table.caption.9}\protected@file@percent }
+\newlabel{tab:infra}{{2.3}{10}{How each design meets the infrastructure requirements}{table.caption.9}{}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {3}Criterion 2 -- Data Correctness}{11}{chapter.3}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\newlabel{ch:correct}{{3}{11}{Criterion 2 -- Data Correctness}{chapter.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.1}Where errors come from}{11}{section.3.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces Three layers of data correctness}}{11}{table.caption.10}\protected@file@percent }
+\newlabel{tab:layers}{{3.1}{11}{Three layers of data correctness}{table.caption.10}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.2}Sensor layer: prevent errors at the source}{11}{section.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.3}Node layer: clean every sample}{12}{section.3.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces Filtering and validation on every node (both designs)}}{12}{figure.caption.11}\protected@file@percent }
+\newlabel{fig:filter}{{3.1}{12}{Filtering and validation on every node (both designs)}{figure.caption.11}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.4}Gateway layer: catch what a single node cannot see}{13}{section.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4.1}Detecting faulty sensors}{13}{subsection.3.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4.2}Zone value: tolerate one bad node per zone}{13}{subsection.3.4.2}\protected@file@percent }
+\newlabel{sec:zone}{{3.4.2}{13}{Zone value: tolerate one bad node per zone}{subsection.3.4.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3.2}{\ignorespaces Zone validity}}{13}{table.caption.12}\protected@file@percent }
+\newlabel{tab:zonevalid}{{3.2}{13}{Zone validity}{table.caption.12}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4.3}Real event or faulty sensor?}{14}{subsection.3.4.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3.3}{\ignorespaces Telling a real event from a sensor fault}}{14}{table.caption.13}\protected@file@percent }
+\newlabel{tab:realfault}{{3.3}{14}{Telling a real event from a sensor fault}{table.caption.13}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4.4}Missing data vs.\ late data}{14}{subsection.3.4.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3.4}{\ignorespaces Quality levels and how they are used}}{14}{table.caption.14}\protected@file@percent }
+\newlabel{tab:quality}{{3.4}{14}{Quality levels and how they are used}{table.caption.14}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.5}Error scenarios at a glance}{14}{section.3.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3.5}{\ignorespaces Main error scenarios and how they are handled}}{15}{table.caption.15}\protected@file@percent }
+\newlabel{tab:fail}{{3.5}{15}{Main error scenarios and how they are handled}{table.caption.15}{}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {4}Criterion 3 -- Data Analysis for Alerts}{16}{chapter.4}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\newlabel{ch:alert}{{4}{16}{Criterion 3 -- Data Analysis for Alerts}{chapter.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.1}The two ways an alert system fails}{16}{section.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.2}Processing pipeline}{16}{section.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4.1}{\ignorespaces Alert analysis pipeline on the gateway}}{17}{figure.caption.16}\protected@file@percent }
+\newlabel{fig:pipeline}{{4.1}{17}{Alert analysis pipeline on the gateway}{figure.caption.16}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.3}The alert state machine}{17}{section.4.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4.2}{\ignorespaces Hierarchical alert FSM (one zone, high-temperature channel); C is the choice point used when recovering from a sensor fault}}{18}{figure.caption.17}\protected@file@percent }
+\newlabel{fig:fsm}{{4.2}{18}{Hierarchical alert FSM (one zone, high-temperature channel); C is the choice point used when recovering from a sensor fault}{figure.caption.17}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4.1}{\ignorespaces Transitions of the high-temperature FSM}}{18}{table.caption.18}\protected@file@percent }
+\newlabel{tab:trans}{{4.1}{18}{Transitions of the high-temperature FSM}{table.caption.18}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.4}Four mechanisms against false alarms}{19}{section.4.4}\protected@file@percent }
+\newlabel{sec:persist}{{4.4}{19}{Four mechanisms against false alarms}{section.4.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4.1}Persistence over a sliding window}{19}{subsection.4.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4.2}Hysteresis -- avoiding a ``Zeno'' alarm}{19}{subsection.4.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4.3}Zone median}{20}{subsection.4.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4.4}Late data is not missing data (watermark)}{20}{subsection.4.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4.5}Keeping real alarms fast}{20}{section.4.5}\protected@file@percent }
+\newlabel{sec:trend}{{4.5}{20}{Keeping real alarms fast}{section.4.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.6}Alerts from derived indices and from space}{20}{section.4.6}\protected@file@percent }
+\newlabel{sec:derived}{{4.6}{20}{Alerts from derived indices and from space}{section.4.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.7}Device alerts are separate}{21}{section.4.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {5}Performance Evaluation}{22}{chapter.5}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\newlabel{ch:pe}{{5}{22}{Performance Evaluation}{chapter.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.1}The 10 steps in brief}{22}{section.5.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.1}{\ignorespaces The 10-step evaluation applied to A and B}}{22}{table.caption.19}\protected@file@percent }
+\newlabel{tab:pe}{{5.1}{22}{The 10-step evaluation applied to A and B}{table.caption.19}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.2}Metrics chosen for each design}{22}{section.5.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.2}{\ignorespaces Metrics per design and why}}{23}{table.caption.20}\protected@file@percent }
+\newlabel{tab:metrics}{{5.2}{23}{Metrics per design and why}{table.caption.20}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.3}Key results}{23}{section.5.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.3}{\ignorespaces Key simulation results}}{23}{table.caption.21}\protected@file@percent }
+\newlabel{tab:results}{{5.3}{23}{Key simulation results}{table.caption.21}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.1}Does the network change the alert delay? (paired comparison)}{23}{subsection.5.3.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.4}{\ignorespaces Alert delay and paired differences (20 fan failures; trend alert off unless stated)}}{24}{table.caption.22}\protected@file@percent }
+\newlabel{tab:paired}{{5.4}{24}{Alert delay and paired differences (20 fan failures; trend alert off unless stated)}{table.caption.22}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.2}Does adaptive reporting save energy? (criterion 1)}{24}{subsection.5.3.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5.5}{\ignorespaces Transmissions per node per day (5\,\% packet loss, retries included)}}{24}{table.caption.23}\protected@file@percent }
+\newlabel{tab:tx}{{5.5}{24}{Transmissions per node per day (5\,\% packet loss, retries included)}{table.caption.23}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.1}{\ignorespaces Alert delay with the trend alert switched off (isolates the effect of the network)}}{24}{figure.caption.24}\protected@file@percent }
+\newlabel{fig:delay}{{5.1}{24}{Alert delay with the trend alert switched off (isolates the effect of the network)}{figure.caption.24}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.4}Evaluation changed the design}{25}{section.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {6}Comparison and Recommendation}{26}{chapter.6}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\newlabel{ch:cmp}{{6}{26}{Comparison and Recommendation}{chapter.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6.1}{\ignorespaces Design A vs. Design B along the three criteria}}{26}{table.caption.25}\protected@file@percent }
+\newlabel{tab:cmp}{{6.1}{26}{Design A vs. Design B along the three criteria}{table.caption.25}{}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {7}Conclusion}{28}{chapter.7}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\newlabel{ch:concl}{{7}{28}{Conclusion}{chapter.7}{}}
+\bibcite{marwedel}{1}
+\bibcite{jain}{2}
+\bibcite{lec}{3}
+\bibcite{pe}{4}
+\bibcite{fao}{5}
+\bibcite{ds}{6}
+\@writefile{toc}{\contentsline {chapter}{\numberline {A}Simulator}{30}{appendix.A}\protected@file@percent }
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\newlabel{app:sim}{{A}{30}{Simulator}{appendix.A}{}}
+\gdef \@abspage@last{31}
