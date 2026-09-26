@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex 2026.5.17)  26 SEP 2026 23:29
+This is XeTeX, Version 3.141592653-2.6-0.999997 (MiKTeX 25.12) (preloaded format=xelatex 2026.5.17)  26 SEP 2026 23:41
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1256,22 +1256,22 @@ Chapter 3.
 Chapter 4.
 [18
 
-] [19] [20] [21] [22] [23] [24] [25] [26] [27]
+] [19] [20] [21] [22] [23] [24] [25] [26]
 Chapter 5.
-[28
+[27
 
-] [29]
-Package pgfplots info on input line 950: Using 'lua backend=false' for axis: x 
+] [28]
+Package pgfplots info on input line 959: Using 'lua backend=false' for axis: x 
 coord trafo unsupported.
- [30] [31] [32] [33]
+ [29] [30] [31] [32]
 Chapter 6.
-[34
+[33
 
-] [35] [36]
+] [34] [35]
 Chapter 7.
-[37
+[36
 
-] [38
+] [37
 
 ] (HK261_CO3053_CCAS1_2353122_2352844_2352849.aux)
  ***********
@@ -1283,12 +1283,12 @@ ut' has not changed.
 (rerunfilecheck)             Checksum: 3CB9F19DDCA7F2DD90713A5E61778766;15270.
  ) 
 Here is how much of TeX's memory you used:
- 38938 strings out of 402987
- 919254 string characters out of 5448317
+ 38939 strings out of 402987
+ 919271 string characters out of 5448317
  1523546 words of memory out of 5000000
- 67052 multiletter control sequences out of 15000+600000
+ 67053 multiletter control sequences out of 15000+600000
  636493 words of font info for 138 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  84i,18n,94p,1040b,2659s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on HK261_CO3053_CCAS1_2353122_2352844_2352849.pdf (39 pages).
+Output written on HK261_CO3053_CCAS1_2353122_2352844_2352849.pdf (38 pages).

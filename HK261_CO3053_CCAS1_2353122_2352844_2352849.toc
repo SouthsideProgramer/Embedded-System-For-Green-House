@@ -34,34 +34,34 @@
 \contentsline {section}{\numberline {4.1}The two ways an alert system fails}{18}{section.4.1}%
 \contentsline {section}{\numberline {4.2}Processing pipeline}{18}{section.4.2}%
 \contentsline {section}{\numberline {4.3}The alert state machine}{19}{section.4.3}%
-\contentsline {section}{\numberline {4.4}Four mechanisms against false alarms}{21}{section.4.4}%
-\contentsline {subsection}{\numberline {4.4.1}Persistence over a sliding window}{21}{subsection.4.4.1}%
-\contentsline {subsection}{\numberline {4.4.2}Hysteresis -- avoiding a ``Zeno'' alarm}{21}{subsection.4.4.2}%
-\contentsline {subsection}{\numberline {4.4.3}Zone median}{22}{subsection.4.4.3}%
-\contentsline {subsection}{\numberline {4.4.4}Late data is not missing data (watermark)}{22}{subsection.4.4.4}%
-\contentsline {section}{\numberline {4.5}Keeping real alarms fast}{22}{section.4.5}%
+\contentsline {section}{\numberline {4.4}Four mechanisms against false alarms}{20}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Persistence over a sliding window}{20}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Hysteresis -- avoiding a ``Zeno'' alarm}{20}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.4.3}Zone median}{21}{subsection.4.4.3}%
+\contentsline {subsection}{\numberline {4.4.4}Late data is not missing data (watermark)}{21}{subsection.4.4.4}%
+\contentsline {section}{\numberline {4.5}Keeping real alarms fast}{21}{section.4.5}%
 \contentsline {section}{\numberline {4.6}Alerts from derived indices and from space}{22}{section.4.6}%
-\contentsline {section}{\numberline {4.7}Device and Infrastructure Diagnostics}{23}{section.4.7}%
-\contentsline {section}{\numberline {4.8}Operations and Maintenance (O\&M): Notification Hierarchy, Dashboard, and SOPs}{24}{section.4.8}%
-\contentsline {subsection}{\numberline {4.8.1}Stakeholder Hierarchy and Multi-Channel Notification Matrix}{24}{subsection.4.8.1}%
-\contentsline {subsection}{\numberline {4.8.2}Multi-Tier Notification Dispatch Architecture}{24}{subsection.4.8.2}%
-\contentsline {subsection}{\numberline {4.8.3}Standard Operating Procedures (SOPs) for Field Maintenance}{26}{subsection.4.8.3}%
-\contentsline {subsubsection}{SOP-01: Low-Battery Replacement and Solar Servicing (Design B)}{26}{section*.20}%
-\contentsline {subsubsection}{SOP-02: Sensor Fault Resolution and Recalibration}{26}{section*.21}%
+\contentsline {section}{\numberline {4.7}Device and Infrastructure Diagnostics}{22}{section.4.7}%
+\contentsline {section}{\numberline {4.8}Operations and Maintenance (O\&M): Notification Hierarchy, Dashboard, and SOPs}{23}{section.4.8}%
+\contentsline {subsection}{\numberline {4.8.1}Stakeholder Hierarchy and Multi-Channel Notification Matrix}{23}{subsection.4.8.1}%
+\contentsline {subsection}{\numberline {4.8.2}Multi-Tier Notification Dispatch Architecture}{23}{subsection.4.8.2}%
+\contentsline {subsection}{\numberline {4.8.3}Standard Operating Procedures (SOPs) for Field Maintenance}{25}{subsection.4.8.3}%
+\contentsline {subsubsection}{SOP-01: Low-Battery Replacement and Solar Servicing (Design B)}{25}{section*.20}%
+\contentsline {subsubsection}{SOP-02: Sensor Fault Resolution and Recalibration}{25}{section*.21}%
 \contentsline {subsubsection}{SOP-03: Cable Break Localization and Splicing (Design A)}{26}{section*.22}%
-\contentsline {subsection}{\numberline {4.8.4}Audit Logging and Data Retention Policy}{27}{subsection.4.8.4}%
-\contentsline {chapter}{\numberline {5}Performance Evaluation}{28}{chapter.5}%
-\contentsline {section}{\numberline {5.1}The 10 steps in brief}{28}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Metrics chosen for each design}{28}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Key results}{29}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Does the network change the alert delay? (paired comparison)}{29}{subsection.5.3.1}%
-\contentsline {subsection}{\numberline {5.3.2}Does adaptive reporting save energy? (criterion 1)}{30}{subsection.5.3.2}%
-\contentsline {subsection}{\numberline {5.3.3}Sensitivity analysis: node density and zone granularity (N = 6 to 20)}{31}{subsection.5.3.3}%
-\contentsline {section}{\numberline {5.4}Evaluation changed the design}{32}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Stress Testing Under Correlated Packet Loss}{32}{section.5.5}%
-\contentsline {subsection}{\numberline {5.5.1}Testing with Burst Loss (Gilbert-Elliott Model)}{33}{subsection.5.5.1}%
-\contentsline {chapter}{\numberline {6}Comparison and Recommendation}{34}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Economic Evaluation and Bill of Materials (BOM)}{35}{section.6.1}%
-\contentsline {subsection}{\numberline {6.1.1}Cost Analysis and Practical Considerations}{36}{subsection.6.1.1}%
-\contentsline {section}{\numberline {6.2}Design Recommendation}{36}{section.6.2}%
-\contentsline {chapter}{\numberline {7}Conclusion}{37}{chapter.7}%
+\contentsline {subsection}{\numberline {4.8.4}Audit Logging and Data Retention Policy}{26}{subsection.4.8.4}%
+\contentsline {chapter}{\numberline {5}Performance Evaluation}{27}{chapter.5}%
+\contentsline {section}{\numberline {5.1}The 10 steps in brief}{27}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Metrics chosen for each design}{27}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Key results}{28}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Does the network change the alert delay? (paired comparison)}{28}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Does adaptive reporting save energy? (criterion 1)}{29}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}Sensitivity analysis: node density and zone granularity (N = 6 to 20)}{30}{subsection.5.3.3}%
+\contentsline {section}{\numberline {5.4}Evaluation changed the design}{31}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Stress Testing Under Correlated Packet Loss}{31}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Testing with Burst Loss (Gilbert-Elliott Model)}{32}{subsection.5.5.1}%
+\contentsline {chapter}{\numberline {6}Comparison and Recommendation}{33}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Economic Evaluation and Bill of Materials (BOM)}{34}{section.6.1}%
+\contentsline {subsection}{\numberline {6.1.1}Cost Analysis and Practical Considerations}{35}{subsection.6.1.1}%
+\contentsline {section}{\numberline {6.2}Design Recommendation}{35}{section.6.2}%
+\contentsline {chapter}{\numberline {7}Conclusion}{36}{chapter.7}%

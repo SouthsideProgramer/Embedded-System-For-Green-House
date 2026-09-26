@@ -597,18 +597,27 @@ Every 30\,s the gateway runs the steps of Figure~\ref{fig:pipeline}.
 
 \begin{figure}[htbp]
 \centering
-\begin{tikzpicture}[node distance=0.45cm]
+\begin{tikzpicture}[font=\small]
+  % Left Column: Ingestion & Spatial Aggregation
   \node[term] (s) {every 30\,s};
-  \node[io, below=of s, text width=5cm] (r) {New records arrive (A: polling, B: slots)};
-  \node[proc, below=of r, text width=6.2cm] (q) {Keep only GOOD values; drop nodes marked as drifting/stuck};
-  \node[proc, below=of q, text width=6.2cm] (c) {Zone values (medians); derived indices: VPD, dew point, max--min spread};
-  \node[proc, below=of c, text width=6.2cm] (u) {Persistence ratios over sliding windows; trend};
-  \node[proc, below=of u, text width=6.2cm] (f) {Update one state machine per (zone, alert channel)};
-  \node[dec, below=of f] (d) {State\\changed?};
-  \node[proc, right=1.2cm of d, text width=2.8cm] (n) {Notify, log};
-  \node[term, below=0.6cm of d] (e) {wait};
-  \draw[arr] (s) -- (r); \draw[arr] (r) -- (q); \draw[arr] (q) -- (c);
-  \draw[arr] (c) -- (u); \draw[arr] (u) -- (f); \draw[arr] (f) -- (d);
+  \node[io, below=0.25cm of s, text width=6.2cm] (r) {New records arrive\\{\scriptsize (A: RS-485 polling, B: LoRa TDMA slots)}};
+  \node[proc, below=0.3cm of r, text width=6.2cm] (q) {Filter: Keep only \textbf{GOOD} values\\{\scriptsize Drop nodes flagged as drifting or stuck (Section~\ref{sec:faultdet})}};
+  \node[proc, below=0.3cm of q, text width=6.2cm] (c) {Zone aggregation \& derived indices\\{\scriptsize Medians; VPD, dew-point margin $T - T_d$, spread}};
+
+  % Right Column: Temporal Analysis & FSM Decisions
+  \path (r.north) ++(7.4,0) node[proc, anchor=north, text width=6.2cm] (u) {Persistence ratios over sliding windows\\{\scriptsize Dynamic heating/cooling trend calculation}};
+  \node[proc, below=0.3cm of u, text width=6.2cm] (f) {Update alert state machine\\{\scriptsize One hierarchical FSM per (zone, alert channel)}};
+  \node[dec, below=0.3cm of f] (d) {State\\changed?};
+  \node[proc, right=0.8cm of d, text width=1.8cm] (n) {Notify\\SMS, siren};
+  \node[term, below=0.3cm of d] (e) {wait};
+
+  % Connecting paths
+  \draw[arr] (s) -- (r);
+  \draw[arr] (r) -- (q);
+  \draw[arr] (q) -- (c);
+  \draw[arr] (c.east) -- ++(0.6,0) |- (u.west);
+  \draw[arr] (u) -- (f);
+  \draw[arr] (f) -- (d);
   \draw[arr] (d) -- node[lbl, above]{yes} (n);
   \draw[arr] (d) -- node[lbl, right]{no} (e);
   \draw[arr] (n) |- (e);
