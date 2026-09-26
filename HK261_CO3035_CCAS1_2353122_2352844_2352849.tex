@@ -51,7 +51,6 @@
 }
 
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
-\newcommand{\todo}[1]{\textcolor{red}{[#1]}}
 \definecolor{cA}{RGB}{31,119,180}
 \definecolor{cB}{RGB}{214,96,39}
 \newcommand{\tagA}{{\setlength{\fboxsep}{1pt}\colorbox{cA!15}{\textsf{\small A}}}}
@@ -973,7 +972,7 @@ We evaluated each density on four practical criteria:
 6  & $2\times3$  & 2 ($M=3$) & 9.72 & 0.639 & 5.79 & 73.5 & \$315.10 & 35.0\,\%\\
 8  & $2\times4$  & 2 ($M=4$) & 8.00 & 0.601 & 3.41 & 97.2 & \$373.70 & 45.0\,\%\\
 10 & $2\times5$  & 2 ($M=5$) & 7.07 & 0.586 & 3.12 & 99.8 & \$432.30 & 55.0\,\%\\
-\textbf{12} & \textbf{$2\times6$} & \textbf{3 ($M=4$)} & \textbf{6.51} & \textbf{0.578} & \textbf{3.24} & \textbf{95.9} & \textbf{\$490.90} & \textbf{65.0\,\%}\\
+\textbf{12} & \textbf{$2\times6$} & \textbf{3 ($M=4$)} & \textbf{6.51} & \textbf{0.578} & \textbf{3.24} & \textbf{95.9} & \textbf{\$491.00} & \textbf{65.0\,\%}\\
 16 & $2\times8$  & 4 ($M=4$) & 5.90 & 0.571 & 3.80 & 94.5 & \$608.10 & 85.0\,\%\\
 20 & $2\times10$ & 4 ($M=5$) & 5.59 & 0.569 & 4.42 & 99.5 & \$725.30 & 105.0\,\%\\
 \bottomrule
@@ -983,7 +982,7 @@ We evaluated each density on four practical criteria:
 
 \textbf{Why 12 nodes ($2\times6$ grid) is the most balanced choice:}
 \begin{itemize}
-  \item \textbf{Diminishing returns in temperature accuracy:} Increasing from $N=6$ to $N=12$ reduces interpolation error from $0.64^\circ\text{C}$ to $0.58^\circ\text{C}$ and shortens the maximum distance to the nearest sensor from 9.7\,m to 6.5\,m. Adding more nodes beyond 12 ($N=16$) only reduces RMSE by another $0.007^\circ\text{C}$---which is negligible compared to the sensor's $\pm 0.1^\circ\text{C}$ accuracy---while increasing hardware cost by 23.9\,\% (\$117.20).
+  \item \textbf{Diminishing returns in temperature accuracy:} Increasing from $N=6$ to $N=12$ reduces interpolation error from $0.64^\circ\text{C}$ to $0.58^\circ\text{C}$ and shortens the maximum distance to the nearest sensor from 9.7\,m to 6.5\,m. Adding more nodes beyond 12 ($N=16$) only reduces RMSE by another $0.007^\circ\text{C}$---which is negligible compared to the sensor's $\pm 0.1^\circ\text{C}$ accuracy---while increasing hardware cost by 23.9\,\% (\$117.10).
   \item \textbf{Zone size and fault tolerance:} Configurations with $N=8$ or $N=10$ nodes can only be divided into two $500\,\text{m}^2$ zones. A 25\,m long zone is too large: localized temperature variations get smoothed out by the median calculation. Twelve nodes is the minimum number that supports three separate zones ($333\,\text{m}^2$ each) with 4 nodes per zone, ensuring that majority voting still functions reliably if one sensor fails (95.9\,\% probability).
   \item \textbf{TDMA channel capacity:} In Design B's 30\,s frame (20 slots $\times$ 1.5\,s), $N=12$ (13 dedicated slots used, including the outdoor node N00) consumes 65.0\,\% of the frame. This leaves 5 spare slots for expansion and 2 shared slots for urgent alarms. With $N=16$, channel occupancy reaches 85.0\,\%, leaving little room for retries; and $N=20$ (21 slots) exceeds the 30\,s frame completely (105.0\,\% load).
 \end{itemize}
