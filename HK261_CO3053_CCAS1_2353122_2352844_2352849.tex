@@ -1,15 +1,16 @@
 % !TeX program = xelatex
 % ============================================================
 %  CO3053 EMBEDDED SYSTEMS - ASSIGNMENT REPORT
-%  Greenhouse micro-climate monitoring system (50 m x 50 m)
+%  Greenhouse micro-climate monitoring system (20 m x 50 m)
 %  Compile with XeLaTeX (Overleaf: Menu -> Compiler -> XeLaTeX)
 % ============================================================
 \documentclass[11pt,a4paper]{report}
 
 \usepackage{fontspec}
-\setmainfont{Times New Roman}
-\setsansfont{Arial}
-\setmonofont{Consolas}
+% Windows fonts when installed (local build); metric-compatible TeX Gyre fonts otherwise (e.g. Overleaf)
+\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{\setmainfont{TeX Gyre Termes}}
+\IfFontExistsTF{Arial}{\setsansfont{Arial}}{\setsansfont{TeX Gyre Heros}}
+\IfFontExistsTF{Consolas}{\setmonofont{Consolas}}{\setmonofont{DejaVu Sans Mono}}
 
 \usepackage[margin=2.5cm]{geometry}
 \usepackage{setspace}\setstretch{1.25}
@@ -126,11 +127,13 @@ At least two designs must be proposed and compared. We propose \textbf{Design A}
 Two properties of the problem drive every decision:
 \begin{itemize}
   \item \textbf{The climate is not uniform.} Areas near sunny walls, fans or misters differ from the centre, so one sensor cannot represent 1{,}000\,m\textsuperscript{2}. We need many measuring points and a way to combine them.
-  \item \textbf{The physics is slow, the timing is soft.} Greenhouse air changes over minutes, not milliseconds. A delay of a few seconds causes no harm, so this is a \emph{soft} real-time system (Kopetz). What matters more is that alerts are \emph{trustworthy}: no false alarms, no missed events.
+  \item \textbf{The physics is slow, the timing is soft.} Greenhouse air changes over minutes, not milliseconds. A delay of a few seconds causes no harm, so this is a \emph{soft} real-time system \cite{kopetz}. What matters more is that alerts are \emph{trustworthy}: no false alarms, no missed events.
 \end{itemize}
 
+\textbf{Alert timing requirement.}\label{sec:req} Soft does not mean unbounded. We fix one quantitative requirement that every design must meet: \emph{once the true zone temperature crosses the ALARM level (35\,°C), the gateway must enter the ALARM state within 8\,min in the worst case} (delivery of the SMS/call is outside the system and not counted). Heat damage to common vegetables needs sustained exposure above this level, so 8\,min still leaves the grower time to open vents or start misting; like the thresholds, the value is configurable per crop. Chapter~\ref{ch:pe} checks both designs against it.
+
 \section{Six families of design challenges and their priority}\label{sec:six}
-Marwedel groups embedded design challenges into six families. They cannot all be optimised at once, so we ranked them for each design. When two goals conflict, the higher-ranked one wins.
+Marwedel \cite{marwedel,lec} groups embedded design challenges into six families. They cannot all be optimised at once, so we ranked them for each design. When two goals conflict, the higher-ranked one wins.
 
 \begin{table}[htbp]
 \centering
@@ -212,7 +215,7 @@ The key consequence: in B, energy and latency pull in opposite directions (sendi
 \why{We use a $2\times6$ grid (12 nodes); each node sits at the centre of a $10\times8.3$\,m cell, so no point of the greenhouse is more than $\sqrt{5^2+4.2^2}\approx 6.5$\,m from a node. The long axis is split into three $20\times16.7$\,m zones of exactly 4 nodes each. Four nodes per zone is the minimum that keeps a trustworthy zone median ($\geq 3$ good nodes, Section~\ref{sec:zone}) when one node fails. We evaluate alternative grid sizes ($N=6, 8, 10, 16, 20$) in Section~\ref{sec:nodesens}, confirming that 12 nodes offer the most balanced trade-off between coverage accuracy, zone fault tolerance, and network capacity. Nodes hang at crop-canopy height (default 1.5\,m, adjustable) inside a ventilated radiation shield. N00, outside the south wall, tells weather changes apart from problems inside the greenhouse.}
 
 \subsection{Node hardware}
-Both designs use \textbf{identical sensors}, so measurement error is not a difference between them: an SHT40 for temperature/humidity (factory-calibrated, has a built-in heater to clear condensation) and a TSL2591 for light (wide dynamic range, up to about 88\,klux). Midday light under the roof can come close to that limit, so the node reduces the sensor's gain and integration time automatically, and any reading at full scale is flagged SUSPECT instead of being trusted. The microcontroller, radio and power supply follow each design's priorities (Chapter~\ref{ch:comm}).
+Both designs use \textbf{identical sensors} \cite{ds}, so measurement error is not a difference between them: an SHT40 for temperature/humidity (factory-calibrated, has a built-in heater to clear condensation) and a TSL2591 for light (wide dynamic range, up to about 88\,klux). Midday light under the roof can come close to that limit, so the node reduces the sensor's gain and integration time automatically, and any reading at full scale is flagged SUSPECT instead of being trusted. The microcontroller, radio and power supply follow each design's priorities (Chapter~\ref{ch:comm}).
 
 % ============================================================
 \chapter{Criterion 1 -- Communication Infrastructure}\label{ch:comm}
@@ -247,7 +250,7 @@ Mesh & Redundant paths, long reach & Relay nodes must stay awake (drains batteri
 % ------------------------------------------------------------
 \section{Design A: wired RS-485 ring bus with Modbus RTU}
 % ------------------------------------------------------------
-\subsection{Ring bus: surviving a cable break}
+\subsection{Ring bus: surviving a cable break}\label{sec:ring}
 A normal bus loses every node beyond a cable break. The cable runs up the west column of nodes, across the north end and down the east column, so \textbf{both ends come back to the gateway}, which has two RS-485 ports, P1 and P2 (Figure~\ref{fig:ring}).
 \begin{itemize}
   \item \textbf{Normal mode:} P1 is the Modbus master and polls all nodes. P2 only listens. Because P2 hears every frame on the cable, it acts as a \emph{continuity monitor}: if P2 stops hearing P1, the cable is broken somewhere.
@@ -329,16 +332,16 @@ SX1276 sensitivity, SF7, 125\,kHz bandwidth & $-123$\,dBm\\
 \textbf{Link margin $\approx 51$\,dB}: Even under an additional extreme fade allowance of 10--15\,dB during direct overhead spraying (pushing total excess loss to 35--40\,dB), the remaining $\approx 36$\,dB margin remains comfortably above standard commercial industrial safety benchmarks ($\ge 20$\,dB).
 }
 
-\textbf{Consequence.} Because the margin is large even under pessimistic assumptions, we use \textbf{SF7}, the fastest spreading factor. A packet then takes only about 67\,ms on air, which minimises both energy per packet and the chance of collisions. The gateway can also \emph{lower} each node's transmit power while keeping about 20\,dB margin -- too much margin is wasted battery.
+\textbf{Consequence.} Because the margin is large even under pessimistic assumptions, we use \textbf{SF7}, the fastest spreading factor. A single-sample packet (28-byte payload: 20 bytes of header, frame counter, battery voltage, timestamp and integrity code, plus 8 bytes per sample) then takes only about 67\,ms on air; a sparse-mode packet carrying four samples (52 bytes) takes about 103\,ms (standard LoRa time-on-air formula, 125\,kHz, coding rate 4/5, 8-symbol preamble, explicit header, CRC on). Short packets minimise both energy per packet and the chance of collisions. The gateway can also \emph{lower} each node's transmit power while keeping about 20\,dB margin -- too much margin is wasted battery.
 
 \textbf{Regulatory check.} Legal limits apply to the power actually \emph{radiated}, not to the power at the chip. The node's radiated power is
 \begin{equation}
   \text{EIRP} = P_{TX} + G_{antenna} = 14\ \text{dBm} + 2\ \text{dBi} = 16\ \text{dBm} \;(\approx 40\ \text{mW}),
 \end{equation}
-which equals about 13.9\,dBm ERP ($\approx 24$\,mW; ERP is EIRP minus 2.15\,dB). In Vietnam, LPWAN radios in the 920--923\,MHz band fall under QCVN~122:2020/BTTTT; before that regulation, LoRa devices had to use the generic short-range-device allocation limited to 25\,mW ERP. Our node stays within even this stricter limit, and in practice the power-control loop will run it lower. The same family of rules restricts channel occupancy by a \emph{duty-cycle} limit (commonly 1\,\%) or by \emph{listen-before-talk}. Our worst case -- dense mode, one 67\,ms packet every 30\,s -- is a duty cycle of 0.22\,\%. If listen-before-talk is required, the SX1276's channel-activity detection can check the channel at the start of each slot; this takes a few milliseconds and fits easily in the 1.5\,s slot. The exact limits must be confirmed against the current text of the regulation before deployment.
+which equals about 13.9\,dBm ERP ($\approx 24$\,mW; ERP is EIRP minus 2.15\,dB). In Vietnam, LPWAN radios in the 920--923\,MHz band fall under QCVN~122:2020/BTTTT; before that regulation, LoRa devices had to use the generic short-range-device allocation limited to 25\,mW ERP. Our node stays within even this stricter limit, and in practice the power-control loop will run it lower. The same family of rules restricts channel occupancy by a \emph{duty-cycle} limit (commonly 1\,\%) or by \emph{listen-before-talk}. Our worst case -- dense mode, one 67\,ms packet every 30\,s -- is a duty cycle of 0.22\,\% (sparse mode, one 103\,ms packet every 120\,s, is only 0.09\,\%). If listen-before-talk is required, the SX1276's channel-activity detection can check the channel at the start of each slot; this takes a few milliseconds and fits easily in the 1.5\,s slot. The exact limits must be confirmed against the current text of the regulation before deployment.
 
 \subsection{Channel access: TDMA instead of random access}
-If 13 nodes transmit at random times (pure ALOHA), two packets sometimes overlap and both are lost. With 13 nodes sending a 67\,ms packet every 60\,s, the standard ALOHA formula $P_{collision} = 1 - e^{-2G}$ (where $G$ is the fraction of time the channel is busy) gives about \textbf{3\,\%} lost packets -- each one costing a retransmission and battery. We therefore give each node its own time slot (Figure~\ref{fig:tdma}).
+If 13 nodes transmit at random times (pure ALOHA), two packets sometimes overlap and both are lost. The standard ALOHA formula $P_{collision} = 1 - e^{-2G}$ (where $G$ is the fraction of time the channel is busy) gives, for 13 nodes, about \textbf{2\,\%} lost packets in sparse mode (one 103\,ms packet every 120\,s) and about \textbf{6\,\%} in dense mode (one 67\,ms packet every 30\,s). Each loss costs a retransmission and battery, and the losses would be highest exactly when values are close to a threshold -- when the data matter most. We therefore give each node its own time slot (Figure~\ref{fig:tdma}).
 
 \begin{figure}[htbp]
 \centering
@@ -358,9 +361,9 @@ If 13 nodes transmit at random times (pure ALOHA), two packets sometimes overlap
 \caption{TDMA frame of Design B}\label{fig:tdma}
 \end{figure}
 
-\why{The frame is 30\,s because that is the sampling period (same as Design A). 20 slots give 12 indoor nodes + N00 + 5 spare slots for extra nodes + 2 shared slots for urgent packets. Each slot is 1.5\,s, while a data packet (about 67\,ms) plus ACK (about 41\,ms) needs roughly 0.1\,s, so there is a large guard time. That guard time matters: a node's crystal clock drifts only a few milliseconds between two ACKs, and every ACK re-synchronises it, so nodes never slide into a neighbour's slot and no separate beacon is needed.}
+\why{The frame is 30\,s because that is the sampling period (same as Design A). 20 slots give 12 indoor nodes + N00 + 5 spare slots for extra nodes + 2 shared slots for urgent packets. Each slot is 1.5\,s, while a data packet (67--103\,ms) plus ACK (about 41\,ms) needs at most about 0.15\,s, so there is a large guard time -- enough even for the three retries of Section~\ref{sec:reliable} inside the same slot. That guard time matters: a node's crystal clock drifts only a few milliseconds between two ACKs, and every ACK re-synchronises it, so nodes never slide into a neighbour's slot and no separate beacon is needed.}
 
-\subsection{Reliable delivery}
+\subsection{Reliable delivery}\label{sec:reliable}
 Radio packets can still be lost (interference, a person standing next to the antenna). Each packet is acknowledged; if no ACK comes back, the node retries up to three times, and if that fails the data stays in a \textbf{24-hour store-and-forward buffer} and is sent with the next packet. The gateway reorders by timestamp and drops duplicates using sequence numbers. Data may arrive late, but it is not lost.
 
 \subsection{Adaptive reporting: saving energy without delaying alerts}\label{sec:adaptive}
@@ -398,7 +401,7 @@ Integrity, order & Modbus CRC; timestamps from synchronised broadcast & Radio CR
 Single failures & One cable break: no node lost & Failures are independent per node\\
 Energy & Not an issue (24\,V over cable) & Sleep, SF7, adaptive reporting, solar\\
 Security & Physical access needed & Encryption, integrity code, anti-replay\\
-Main cost & 150\,m STP cable, PVC conduit, and wiring labor (\$635 CAPEX) & Solar/battery hardware and Year-3 cell renewal (\$491 CAPEX)\\
+Main cost & 150\,m STP cable, PVC conduit, and wiring labor (\$634.50 CAPEX) & Radio, solar and battery hardware (\$491 CAPEX); Year-3 cell renewal (OPEX)\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -464,7 +467,7 @@ Every cycle, each node runs the procedure of Figure~\ref{fig:filter} and attache
 \caption{Filtering and validation on every node (both designs)}\label{fig:filter}
 \end{figure}
 
-\why{\emph{Five reads, median:} five reads take only about 50\,ms. The median of five ignores up to two corrupted reads, whereas an average would be dragged by a single spike. \emph{Physically possible:} temperature 0--60\,°C, humidity 0--100\,\%, light not negative -- anything else is a hardware fault. \emph{Too fast:} a change of more than 3\,°C per minute. Real greenhouse air has too much thermal inertia to change that fast, so such a jump is almost certainly a glitch; it is flagged, not deleted, in case it is real.}
+\why{\emph{Five reads, median:} five SHT40 reads take only about 50\,ms; the TSL2591 needs 100--600\,ms per read depending on its integration time, so five light reads take 0.5--3\,s -- still small compared with the 30\,s cycle. The median of five ignores up to two corrupted reads, whereas an average would be dragged by a single spike. \emph{Physically possible:} temperature $-20$ to $70$\,°C (inside the SHT40's $-40$ to $125$\,°C range, and wide enough that a real frost or a real heat event is never mistaken for a fault), humidity 0--100\,\%, light not negative -- anything else is a hardware fault. \emph{Too fast:} a change of more than 3\,°C per minute. Real greenhouse air has too much thermal inertia to change that fast, so such a jump is almost certainly a glitch; it is flagged, not deleted, in case it is real.}
 
 Only \textbf{GOOD} values may trigger or clear environmental alerts. SUSPECT values are still displayed (marked), BAD values are not.
 
@@ -473,7 +476,7 @@ We deliberately do \emph{not} put a smoothing filter (moving average) on the ale
 \section{Gateway layer: catch what a single node cannot see}
 A node cannot know that it is drifting -- its readings look perfectly plausible. Only a comparison with other nodes reveals it. This is why fault detection runs on the gateway.
 
-\subsection{Detecting faulty sensors}
+\subsection{Detecting faulty sensors}\label{sec:faultdet}
 \begin{itemize}
   \item \textbf{Drift.} For each node, compute the difference between its value and the median of its grid neighbours. If the difference stays above 2\,°C for 30 minutes while the neighbours agree with each other, the node is marked as drifting and removed from calculations; maintenance is notified.
   \item \textbf{Stuck value.} A node whose reading has not changed at all for 30 minutes while all other nodes are changing is marked BAD.
@@ -614,7 +617,7 @@ Every 30\,s the gateway runs the steps of Figure~\ref{fig:pipeline}.
 \end{figure}
 
 \section{The alert state machine}
-Each pair (zone, alert channel) -- for example ``zone Z2, high temperature'' -- has its own finite state machine (FSM). All FSMs follow the same template (Figure~\ref{fig:fsm}); only thresholds change. Three design choices:
+Each pair (zone, alert channel) -- for example ``zone Z2, high temperature'' -- has its own finite state machine (FSM) \cite{lec}. All FSMs follow the same template (Figure~\ref{fig:fsm}); only thresholds change. Three design choices:
 \begin{itemize}
   \item \textbf{Moore outputs plus entry actions:} the lights and the siren are Moore outputs -- they depend only on the current state, so they do not flicker when data is noisy. Messages are \emph{entry actions}: sent once when a state is entered, plus a periodic reminder while in ALARM.UNACK.
   \item \textbf{Hierarchical:} NORMAL, WARNING and ALARM sit inside a MONITORING super-state. The transition to SENSOR\_FAULT is defined once, at the super-state level. ALARM has two sub-states: UNACK (siren on) and ACK (operator acknowledged; siren off, red light stays).
@@ -672,6 +675,8 @@ T6 & SENSOR\_FAULT $\to$ C & Reliable data is back; C re-enters ALARM, WARNING o
 
 \why{The 32\,°C / 35\,°C levels are typical reference values for common vegetables and are \emph{configurable per crop}; the method does not depend on them. The exit levels (30\,°C, 33\,°C) are 2\,°C below the entry levels -- see hysteresis below.}
 
+\textbf{Low-temperature channel.} Cold nights (e.g.\ highland farms such as Da Lat) are handled by a second FSM per zone built from the same template, mirrored: NORMAL $\to$ WARNING when $T < 5$\,°C sustained over 5\,min, WARNING or NORMAL $\to$ ALARM when $T < 2$\,°C sustained over 3\,min, and exits 2\,°C above the entry levels (7\,°C and 4\,°C). Because the node's plausibility range extends down to $-20$\,°C, a real frost is reported as an ALARM, never as a sensor fault. These levels are also configurable per crop.
+
 \textbf{Execution rules.}
 \begin{itemize}[noitemsep]
   \item Each FSM moves at most one step per cycle. If several conditions hold, a fixed priority decides: sensor fault (T5) $>$ escalation (T7, T3) $>$ T1 $>$ de-escalation (T4, T2). The machine is therefore deterministic.
@@ -722,8 +727,9 @@ Raw thresholds miss some risks, so the gateway also computes:
 \begin{itemize}
   \item \textbf{Vapour pressure deficit (VPD)} -- how strongly the air ``pulls'' water from leaves:
   \begin{equation}
-    e_s = 0.6108\,\exp\!\left(\frac{17.27\,T}{T + 237.3}\right)\ \text{kPa}, \qquad VPD = e_s\left(1 - \frac{RH}{100}\right).
+    e_s = 0.6108\,\exp\!\left(\frac{17.27\,T}{T + 237.3}\right)\ \text{kPa}, \qquad VPD = e_s\left(1 - \frac{RH}{100}\right)
   \end{equation}
+  (saturation vapour pressure as in FAO-56 \cite{fao}).
   Too low: fungal disease risk; too high: plant water stress. Neither is visible from temperature or humidity alone.
   \item \textbf{Dew-point margin} $T - T_d$ (Magnus formula): when it is small, water condenses on leaves, typically at night.
   \item \textbf{Daily light integral (DLI):} plants need a total amount of photosynthetic light per day, not a momentary value. The TSL2591 measures lux, so we convert with the usual factor for \emph{sunlight}, $\mathrm{PPFD} \approx E_{lux}/54$\,µmol\,m\textsuperscript{-2}\,s\textsuperscript{-1} (1\,klux $\approx$ 18.5\,µmol\,m\textsuperscript{-2}\,s\textsuperscript{-1}), and sum over the day:
@@ -734,6 +740,8 @@ Raw thresholds miss some risks, so the gateway also computes:
   \item \textbf{Uneven temperature:} the spread between the hottest and coldest GOOD nodes. A large spread usually means a fan or vent in one area has failed -- an alert that only a multi-point system can give.
 \end{itemize}
 All use the same FSM template (WARNING level only), with windows adapted to how slowly each quantity changes.
+
+Humidity and light deliberately have no separate raw-threshold channels: what harms the crop is the \emph{combination} of temperature and humidity (captured by VPD and the dew-point margin) and the \emph{daily total} of light (captured by DLI), not a momentary \%RH or lux value. If a grower wants a raw channel (e.g.\ ``RH $> 95$\,\%'' or ``no daylight at noon'', which would reveal a stuck shading screen), it is added with the same template and no change to the architecture.
 
 \section{Device and Infrastructure Diagnostics}\label{sec:devdiag}
 Environmental alerts (``the greenhouse is too hot'') and device health alerts (``a sensor is broken'') are segregated into distinct channels, ensuring that agricultural operators are not inundated with technical telemetries while maintenance technicians receive actionable diagnostic data:
@@ -792,7 +800,7 @@ To prevent alert fatigue and ensure prompt remediation, three standard operation
 \subsubsection{SOP-01: Low-Battery Replacement and Solar Servicing (Design B)}
 \begin{enumerate}[noitemsep]
   \item \textbf{Automated preservation:} When cell voltage drops below $3.10\,\text{V}$ (or after two consecutive days where peak voltage fails to exceed $3.25\,\text{V}$ due to cell aging or severe solar panel soiling), node firmware enters \emph{battery preservation mode}: it shuts down the light sensor, disables radio listen slots, and reports only a single diagnostic frame every 15 minutes.
-  \item \textbf{Dispatch:} The Telegram bot sends a maintenance ticket specifying the node identifier and coordinates: \textsf{"[BATTERY WARNING] Node N07 (Zone Z2, East Column, y = 20.8 m) cell voltage = 3.08 V. Replace cell within 48 hours."}
+  \item \textbf{Dispatch:} The Telegram bot sends a maintenance ticket specifying the node identifier and coordinates: \textsf{"[BATTERY WARNING] Node N07 (Zone Z2, West Column, y = 29.2 m) cell voltage = 3.08 V. Replace cell within 48 hours."}
   \item \textbf{Field execution:} The technician carries a pre-charged 18650 LiFePO$_4$ cell from the gateway charging dock. Without dismounting the enclosure, the technician releases the four IP65 stainless steel quick-latches, extracts the depleted cell from its reverse-polarity protected holder, and inserts the fresh cell ($< 90$\,seconds downtime).
   \item \textbf{Solar panel hygiene:} The technician wipes dust, chemical spray residue, and algae off the 1.5\,W panel cover with a damp microfiber cloth.
   \item \textbf{Verification:} Upon battery insertion, the node executes a 3-second self-test LED sequence, transmits an immediate commissioning frame to the gateway, and resumes standard 30\,s adaptive operation. The gateway automatically clears the ticket and logs the replacement.
@@ -800,15 +808,15 @@ To prevent alert fatigue and ensure prompt remediation, three standard operation
 
 \subsubsection{SOP-02: Sensor Fault Resolution and Recalibration}
 \begin{enumerate}[noitemsep]
-  \item \textbf{Isolation:} If a sensor reading deviates by $> 2.0^\circ\text{C}$ from its zone median for 10 minutes or remains statically frozen for 30 minutes, the gateway flags the node as \texttt{SUSPECT} and removes its weight from the zone median voting ($M-1$ fallback).
+  \item \textbf{Isolation:} If a sensor reading deviates by $> 2.0^\circ\text{C}$ from the median of its grid neighbours for 30 minutes (drift), or remains statically frozen for 30 minutes (stuck), the gateway applies the rules of Section~\ref{sec:faultdet}: the node is marked as drifting or BAD and removed from the zone median, which is then computed from the zone's remaining GOOD nodes (Table~\ref{tab:zonevalid}).
   \item \textbf{Condensation recovery:} The technician issues a remote command via the dashboard to activate the SHT40's internal $200\,\text{mW}$ resistive heating element for 5 seconds to evaporate water droplets trapped inside the sintered PTFE filter membrane.
   \item \textbf{Probe replacement:} If the sensor remains degraded after heating, the technician inspects the probe. The SHT40/TSL2591 assembly is connected via a waterproof M12 quick-disconnect connector, allowing the entire sensor head to be hot-swapped in 2 minutes without opening the main MCU enclosure or re-flashing firmware.
 \end{enumerate}
 
 \subsubsection{SOP-03: Cable Break Localization and Splicing (Design A)}
 \begin{enumerate}[noitemsep]
-  \item \textbf{Automated ring split:} When gateway Port P2 ceases receiving Modbus carrier from Port P1, the gateway continuity monitor trips, immediately engaging Split Mode (polling odd nodes via P1 and even nodes via P2).
-  \item \textbf{Localization ticket:} The gateway identifies the break between the last responding node on P1 and the last responding node on P2 (e.g., \textsf{"[CABLE BREAK] Bus severed between Node N06 (East, y=20.8 m) and Node N04 (East, y=29.2 m). All nodes remain operational."})
+  \item \textbf{Automated ring split:} When gateway Port P2 ceases receiving Modbus carrier from Port P1, the gateway continuity monitor trips, immediately engaging Split Mode: P1 polls the nodes on its side of the break and P2 polls the nodes on the other side, so no node is lost (Section~\ref{sec:ring}).
+  \item \textbf{Localization ticket:} The gateway identifies the break between the last responding node on P1 and the last responding node on P2 (e.g., \textsf{"[CABLE BREAK] Bus severed between Node N06 (East, y=20.8 m) and Node N04 (East, y=12.5 m). All nodes remain operational."})
   \item \textbf{Physical repair:} The technician walks the 8.3\,m PVC conduit run between N06 and N04, checks for tilling blade damage or loose junction boxes, splices the 2-pair STP cable with an IP68 gel-filled inline closure, and re-attaches the shield drain wire. Normal ring continuity is restored automatically.
 \end{enumerate}
 
@@ -823,7 +831,7 @@ The gateway maintains an embedded time-series database (SQLite / DuckDB) storing
 % ============================================================
 \chapter{Performance Evaluation}\label{ch:pe}
 % ============================================================
-The three mechanisms above were evaluated with the standard 10-step performance-evaluation procedure. Table~\ref{tab:pe} summarises the steps; the metrics are chosen \emph{separately} for each design because each design can fail in different ways.
+The three mechanisms above were evaluated with the standard 10-step performance-evaluation procedure \cite{jain,pe}. Table~\ref{tab:pe} summarises the steps; the metrics are chosen \emph{separately} for each design because each design can fail in different ways.
 
 \section{The 10 steps in brief}
 \begin{table}[htbp]
@@ -897,7 +905,7 @@ Because every configuration was run on the \emph{same} 20 fan failures (common r
 A (RS-485) & $2.70 \pm 0.37$ & 6.0 & -- & Reference\\
 B, fixed 30\,s & $2.75 \pm 0.43$ & 6.5 & $+0.05\ [-0.02, +0.12]$ & No significant difference\\
 B, adaptive (120\,s + dense) & $2.75 \pm 0.43$ & 6.5 & $+0.05\ [-0.02, +0.12]$ & No significant difference; at most $\approx$7\,s slower\\
-B, fixed 120\,s & $3.40 \pm 0.53$ & 7.5 & $+0.70\ [+0.43, +0.97]$ & Significantly slower; worst case near the 8\,min limit\\
+B, fixed 120\,s & $3.40 \pm 0.53$ & 7.5 & $+0.70\ [+0.43, +0.97]$ & Significantly slower; worst case near the 8\,min requirement (Section~\ref{sec:req})\\
 \midrule
 A, trend on & $-1.23 \pm 0.74$ & 1.5 & -- & Alarm before 35\,°C is reached\\
 B adaptive, trend on & $-0.38 \pm 0.80$ & 3.0 & $+0.85\ [+0.61, +1.09]$ & Significantly later than A, but still before 35\,°C on average\\
@@ -982,7 +990,7 @@ We evaluated each density on four practical criteria:
 
 \textbf{Why 12 nodes ($2\times6$ grid) is the most balanced choice:}
 \begin{itemize}
-  \item \textbf{Diminishing returns in temperature accuracy:} Increasing from $N=6$ to $N=12$ reduces interpolation error from $0.64^\circ\text{C}$ to $0.58^\circ\text{C}$ and shortens the maximum distance to the nearest sensor from 9.7\,m to 6.5\,m. Adding more nodes beyond 12 ($N=16$) only reduces RMSE by another $0.007^\circ\text{C}$---which is negligible compared to the sensor's $\pm 0.1^\circ\text{C}$ accuracy---while increasing hardware cost by 23.9\,\% (\$117.10).
+  \item \textbf{Diminishing returns in temperature accuracy:} Increasing from $N=6$ to $N=12$ reduces interpolation error from $0.64^\circ\text{C}$ to $0.58^\circ\text{C}$ and shortens the maximum distance to the nearest sensor from 9.7\,m to 6.5\,m. Adding more nodes beyond 12 ($N=16$) only reduces RMSE by another $0.007^\circ\text{C}$---which is negligible compared to the sensor's $\pm 0.2^\circ\text{C}$ accuracy---while increasing hardware cost by 23.9\,\% (\$117.10).
   \item \textbf{Zone size and fault tolerance:} Configurations with $N=8$ or $N=10$ nodes can only be divided into two $500\,\text{m}^2$ zones. A 25\,m long zone is too large: localized temperature variations get smoothed out by the median calculation. Twelve nodes is the minimum number that supports three separate zones ($333\,\text{m}^2$ each) with 4 nodes per zone, ensuring that majority voting still functions reliably if one sensor fails (95.9\,\% probability).
   \item \textbf{TDMA channel capacity:} In Design B's 30\,s frame (20 slots $\times$ 1.5\,s), $N=12$ (13 dedicated slots used, including the outdoor node N00) consumes 65.0\,\% of the frame. This leaves 5 spare slots for expansion and 2 shared slots for urgent alarms. With $N=16$, channel occupancy reaches 85.0\,\%, leaving little room for retries; and $N=20$ (21 slots) exceeds the 30\,s frame completely (105.0\,\% load).
 \end{itemize}
@@ -1006,7 +1014,7 @@ In a real greenhouse, radio signal drops caused by water droplets and wet leaves
   \item \textbf{Morning dew condensation:} Thick water films on plant leaves create prolonged multipath fading until the morning sun evaporates surface moisture.
 \end{itemize}
 
-\emph{Methodological note:} As with the link budget's 25--35\,dB foliage attenuation, these burst fade scenarios and loss probabilities are assumed stress-testing parameters designed to explore system boundaries, not empirical on-site RF channel measurements. Their purpose is sensitivity analysis---determining at what outage duration wireless alert latency exceeds crop safety margins.
+\emph{Methodological note:} As with the link budget's assumed 25\,dB foliage and structural attenuation (35--40\,dB with the extra spray-fade allowance), these burst fade scenarios and loss probabilities are assumed stress-testing parameters designed to explore system boundaries, not empirical on-site RF channel measurements. Their purpose is sensitivity analysis---determining at what outage duration wireless alert latency exceeds crop safety margins.
 
 \subsection{Testing with Burst Loss (Gilbert-Elliott Model)}
 To evaluate how Design B behaves during sustained fades, we simulated both designs using a standard two-state Gilbert-Elliott Markov channel model (1{,}000 heating spike trials):
@@ -1030,14 +1038,14 @@ To evaluate how Design B behaves during sustained fades, we simulated both desig
  & B (LoRa) & $4.36 \pm 0.32$\,min & 5.0\,min & Overhead misting cycle delays ALARM confirmation by $+1.66$\,min\\
 \midrule
 \multirow{2}{*}{\makecell[l]{5-min Correlated\\Burst (Dew Fade)}} & A (Wired) & $2.70 \pm 0.37$\,min & 6.0\,min & Unaffected; deterministic cycle preserved\\
- & B (LoRa) & $6.96 \pm 0.48$\,min & 7.5\,min & Prolonged condensation pushes delay dangerously close to 8\,min crop limit\\
+ & B (LoRa) & $6.96 \pm 0.48$\,min & 7.5\,min & Prolonged condensation pushes delay dangerously close to the 8\,min requirement\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \textbf{Key findings from burst-loss testing:}
 \begin{enumerate}
-  \item \textbf{Impact of burst duration on alarm timing:} Design B matches Design A only when packet losses are scattered or burst outages remain under 2 minutes. When overhead misting creates a 2-minute fade, Design B's average alert delay increases from 2.65\,min to 4.36\,min. Under a 5-minute fade, delay reaches 6.96\,min (95th percentile: 7.50\,min), approaching the 8-minute crop safety threshold.
+  \item \textbf{Impact of burst duration on alarm timing:} Design B matches Design A only when packet losses are scattered or burst outages remain under 2 minutes. When overhead misting creates a 2-minute fade, Design B's average alert delay increases from 2.65\,min to 4.36\,min. Under a 5-minute fade, delay reaches 6.96\,min (95th percentile: 7.50\,min), approaching the 8-minute worst-case alert requirement (Section~\ref{sec:req}).
   \item \textbf{Practical takeaway:} The simulation results demonstrate that the alert logic works well under nominal conditions, but real-world reliability depends heavily on the radio link margin ($\approx 51$\,dB, Table~\ref{tab:link}) absorbing canopy fades to keep burst outages short ($<2$\,min). If a greenhouse uses continuous overhead misting that causes link blackouts longer than 3--5 minutes, Design A's wired bus is necessary to guarantee alarm timing. Because wet-canopy RF dynamics are assumed rather than measured in this proposal, physical RSSI logging on a pilot prototype is recommended before commercial commissioning.
 \end{enumerate}
 
@@ -1060,9 +1068,9 @@ Installation & 150\,m STP cable + 130\,m PVC conduit; 24 man-hours & Clamped to 
 Security & Physical access needed & Needs encryption and key management\\
 \midrule
 \multicolumn{3}{l}{\textit{Economic metrics (13 nodes + 1 gateway, 2026 market prices)}}\\
-Initial CAPEX & \$635.00 (cable, conduit, gland termination labor) & \$491.00 (22.7\,\% cheaper upfront; zero field cabling)\\
+Initial CAPEX & \$634.50 (cable, conduit, gland termination labor) & \$491.00 (22.6\,\% cheaper upfront; zero field cabling)\\
 5-Year OPEX & \$70.00 (continuous grid power + cable/gland maintenance) & \$90.00 (solar cleaning + Year-3 battery replacement)\\
-5-Year TCO & \$705.00 & \$581.00 (saves \$124.00 / 17.6\,\% over 5-year lifecycle)\\
+5-Year TCO & \$704.50 & \$581.00 (saves \$123.50 / 17.5\,\% over 5-year lifecycle)\\
 \midrule
 \multicolumn{3}{l}{\textit{Data correctness}}\\
 Sensor and node layers & \multicolumn{2}{l}{Identical}\\
@@ -1112,7 +1120,7 @@ Gateway hardware \& interface & 1 & \$65.00 & \$110.00 & Dual RS-485 hat vs SX13
 Electrical wiring \& conduit fitting & -- & \$120.00 & \$0.00 & 24 man-hours (trenching, pulling, 26 glands)\\
 Wireless mounting \& radio pairing & -- & \$0.00 & \$30.00 & 4 man-hours (bracket clamping \& slot verify)\\
 \midrule
-\textbf{Total Initial CAPEX} & & \textbf{\$635.00} & \textbf{\$491.00} & \textbf{Design B is 22.7\,\% cheaper upfront}\\
+\textbf{Total Initial CAPEX} & & \textbf{\$634.50} & \textbf{\$491.00} & \textbf{Design B is 22.6\,\% cheaper upfront}\\
 \midrule
 \multicolumn{5}{l}{\textit{5-Year Operational Expenditure (OPEX)}}\\
 Grid electricity (continuous) & 5\,yr & \$30.00 & \$10.00 & 24\,V bus (5\,W continuous) vs gateway only\\
@@ -1122,7 +1130,7 @@ Battery replacement (Year 3) & 13 & \$0.00 & \$55.00 & LiFePO$_4$ renewal under 
 \midrule
 \textbf{Total 5-Year OPEX} & & \textbf{\$70.00} & \textbf{\$90.00} & Higher maintenance for batteries/solar in B\\
 \midrule
-\textbf{5-Year Total Cost of Ownership (TCO)} & & \textbf{\$705.00} & \textbf{\$581.00} & \textbf{Design B saves \$124.00 (17.6\,\%) over 5 years}\\
+\textbf{5-Year Total Cost of Ownership (TCO)} & & \textbf{\$704.50} & \textbf{\$581.00} & \textbf{Design B saves \$123.50 (17.5\,\%) over 5 years}\\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1130,16 +1138,16 @@ Battery replacement (Year 3) & 13 & \$0.00 & \$55.00 & LiFePO$_4$ renewal under 
 \subsection{Cost Analysis and Practical Considerations}
 Comparing the installation and operational costs reveals two practical engineering factors:
 \begin{enumerate}
-  \item \textbf{Cabling overhead dominates Design A's upfront cost:} While a wired bus eliminates the cost of batteries and solar panels, industrial deployment requires shielded 2-pair cable, PVC conduit to protect wiring from tilling tools and chemical sprays, and manual pulling labor. Cable, conduit, and pulling labor account for 56.5\,\% (\$359 of \$635) of Design A's initial cost. As a result, Design B is approximately 22.7\,\% cheaper to deploy upfront (\$491 vs. \$635).
-  \item \textbf{Battery replacement vs. Cable maintenance (5-year OPEX):} High temperatures under greenhouse roofs ($35$--$45^\circ\text{C}$) accelerate battery aging. Even with heat-resistant LiFePO$_4$ cells, we budget for a complete battery replacement at year 3 (\$55 for 13 cells including labor), along with semi-annual solar panel cleaning (\$25 over 5 years). For Design A, high humidity and corrosive chemical sprays lead to connector oxidation and cable gland maintenance (\$40 over 5 years). Overall, Design B maintains a 17.6\,\% lower 5-year total cost of ownership (\$581 vs. \$705).
+  \item \textbf{Cabling overhead dominates Design A's upfront cost:} While a wired bus eliminates the cost of batteries and solar panels, industrial deployment requires shielded 2-pair cable, PVC conduit to protect wiring from tilling tools and chemical sprays, and manual pulling labor. Cable, conduit, and pulling labor account for 56.6\,\% (\$359 of \$634.50) of Design A's initial cost. As a result, Design B is approximately 22.6\,\% cheaper to deploy upfront (\$491 vs. \$634.50).
+  \item \textbf{Battery replacement vs. Cable maintenance (5-year OPEX):} High temperatures under greenhouse roofs ($35$--$45^\circ\text{C}$) accelerate battery aging. Even with heat-resistant LiFePO$_4$ cells, we budget for a complete battery replacement at year 3 (\$55 for 13 cells including labor), along with semi-annual solar panel cleaning (\$25 over 5 years). For Design A, high humidity and corrosive chemical sprays lead to connector oxidation and cable gland maintenance (\$40 over 5 years). Overall, Design B maintains a 17.5\,\% lower 5-year total cost of ownership (\$581 vs. \$704.50).
 \end{enumerate}
 
 \section{Design Recommendation}\label{sec:rec}
 \textbf{Trade-off summary.} As demonstrated by the simulation in Chapter~\ref{ch:pe}, the alert state machine absorbs short network delivery delays: threshold-based alert delay shows no meaningful difference between A and B under normal conditions ($+0.05$\,min paired difference). The engineering selection therefore depends primarily on cost, maintenance, and farm layout:
 \begin{itemize}
-  \item \textbf{Choose Design A (RS-485)} for permanent hydroponic or NFT (Nutrient Film Technique) greenhouses with fixed steel gutters, overhead cable trays, and long-term crop cycles (e.g., vertical strawberries or multi-year vine crops). In these facilities, tilling tools never operate, overhead cable trays protect wiring without extra conduit work, and avoiding battery replacements justifies the \$124 (17.6\,\%) higher 5-year cost for reliable physical wiring.
-  \item \textbf{Choose Design B (LoRa Star)} for soil-based or raised-bed vegetable farms (common in Da Lat and Cu Chi). In these greenhouses, beds are cleared, disinfected, and tilled every 3--4 months. In-ground or low-hanging cables in Design A risk being damaged by tillage tools, causing frequent maintenance issues. Design B nodes can be unhooked and stored during bed preparation, while offering 22.7\,\% lower upfront cost and 17.6\,\% lower 5-year cost.
-  \item \textbf{Recommendation for this assignment:} For the $20\times50$\,m commercial greenhouse assignment, we recommend \textbf{Design B with adaptive reporting}, provided that on-site testing confirms that morning condensation or overhead misting does not cause continuous radio blackouts exceeding 2--3 minutes (Section~\ref{sec:threats}). Its \$491 initial cost provides an affordable entry point for growers, its 5-year cost (\$581) saves \$124, and wireless agility fits the seasonal replanting routine of vegetable farming. However, if the facility uses dense overhead misting that creates prolonged link blackouts ($>5$\,min), Design A's physical cable determinism is necessary to eliminate the risk of delayed alarms.
+  \item \textbf{Choose Design A (RS-485)} for permanent hydroponic or NFT (Nutrient Film Technique) greenhouses with fixed steel gutters, overhead cable trays, and long-term crop cycles (e.g., vertical strawberries or multi-year vine crops). In these facilities, tilling tools never operate, overhead cable trays protect wiring without extra conduit work, and avoiding battery replacements justifies the \$123.50 (17.5\,\%) higher 5-year cost for reliable physical wiring.
+  \item \textbf{Choose Design B (LoRa Star)} for soil-based or raised-bed vegetable farms (common in Da Lat and Cu Chi). In these greenhouses, beds are cleared, disinfected, and tilled every 3--4 months. In-ground or low-hanging cables in Design A risk being damaged by tillage tools, causing frequent maintenance issues. Design B nodes can be unhooked and stored during bed preparation, while offering 22.6\,\% lower upfront cost and 17.5\,\% lower 5-year cost.
+  \item \textbf{Recommendation for this assignment:} For the $20\times50$\,m commercial greenhouse assignment, we recommend \textbf{Design B with adaptive reporting}, provided that on-site testing confirms that morning condensation or overhead misting does not cause continuous radio blackouts exceeding 2--3 minutes (Section~\ref{sec:threats}). Its \$491 initial cost provides an affordable entry point for growers, its 5-year cost (\$581) saves \$123.50, and wireless agility fits the seasonal replanting routine of vegetable farming. However, if the facility uses dense overhead misting that creates prolonged link blackouts ($>5$\,min), Design A's physical cable determinism is necessary to eliminate the risk of delayed alarms.
 \end{itemize}
 
 % ============================================================
@@ -1156,6 +1164,7 @@ Comparing the installation and operational costs reveals two practical engineeri
 % ============================================================
 \begin{thebibliography}{99}
 \bibitem{marwedel} P. Marwedel, \emph{Embedded System Design}, 4th ed., Springer, 2021.
+\bibitem{kopetz} H. Kopetz, \emph{Real-Time Systems: Design Principles for Distributed Embedded Applications}, 2nd ed., Springer, 2011.
 \bibitem{jain} R. Jain, \emph{The Art of Computer Systems Performance Analysis}, Wiley, 1991.
 \bibitem{lec} CO3053 lecture notes (Ch.~1 Introduction; L2 Platform Architecture; L3 Development Process; L4 State Machines \& Flowcharts), HCMUT.
 \bibitem{pe} Tran Van Hoai, \emph{Steps in Performance Evaluation} and \emph{Selection of Techniques and Metrics}, lecture notes, HCMUT.
