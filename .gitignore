@@ -1,0 +1,12 @@
+# Compiled binaries & test runners
+*.exe
+*.o
+*.obj
+*.out
+*.log
+*.aux
+*.toc
+
+# Temporary / OS
+.DS_Store
+Thumbs.db
