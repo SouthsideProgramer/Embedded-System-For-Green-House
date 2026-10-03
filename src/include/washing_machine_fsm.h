@@ -86,6 +86,21 @@ void wm_fsm_tick_1ms(wm_context_t *ctx);
 void wm_fsm_tick_1s(wm_context_t *ctx);
 
 /**
+ * @brief Get current FSM state (safe getter).
+ */
+wm_state_t wm_fsm_get_state(const wm_context_t *ctx);
+
+/**
+ * @brief Get accumulated coin balance in cents.
+ */
+uint32_t wm_fsm_get_balance(const wm_context_t *ctx);
+
+/**
+ * @brief Get remaining cycle time in seconds.
+ */
+uint32_t wm_fsm_get_remaining_seconds(const wm_context_t *ctx);
+
+/**
  * @brief Convert state enum to human-readable string.
  */
 const char* wm_state_to_str(wm_state_t state);

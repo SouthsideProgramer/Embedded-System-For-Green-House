@@ -13,6 +13,7 @@
 
 static void enter_standby(wm_context_t *ctx) {
     ctx->state = WM_STATE_STANDBY;
+    ctx->coin_balance_cents = 0;
     ctx->remaining_cycle_sec = 0;
     ctx->stop_press_count = 0;
     ctx->stop_window_timer_ms = 0;
@@ -151,6 +152,12 @@ bool wm_fsm_dispatch_event(wm_context_t *ctx, wm_event_t event) {
         return false;
     }
 
+    /* System 1ms tick handling */
+    if (event == WM_EVT_TIMER_TICK_1MS) {
+        wm_fsm_tick_1ms(ctx);
+        return true;
+    }
+
     /* Dispatch based on current state */
     switch (ctx->state) {
         case WM_STATE_STANDBY:
@@ -287,3 +294,16 @@ const char* wm_event_to_str(wm_event_t event) {
         default:                    return "UNKNOWN_EVENT";
     }
 }
+
+wm_state_t wm_fsm_get_state(const wm_context_t *ctx) {
+    return ctx ? ctx->state : WM_STATE_STANDBY;
+}
+
+uint32_t wm_fsm_get_balance(const wm_context_t *ctx) {
+    return ctx ? ctx->coin_balance_cents : 0;
+}
+
+uint32_t wm_fsm_get_remaining_seconds(const wm_context_t *ctx) {
+    return ctx ? ctx->remaining_cycle_sec : 0;
+}
+
